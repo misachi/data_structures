@@ -9,6 +9,7 @@ struct node {
 struct list {
     struct node *root;
     int size;
+    int count;
 };
 
 struct node *new_node(int num) {
@@ -20,7 +21,7 @@ struct node *new_node(int num) {
 
 void insert(struct list *list, int num) {
     struct node *node = new_node(num);
-    list->size++;
+    list->count++;
     node->next = list->root;
     if (list->root != NULL)
         list->root->prev = node;
@@ -54,19 +55,21 @@ void delete_item(struct list *list, int num) {
         node->next->prev = node->prev;
 
     free(node);
-    list->size--; // Decrease count by 1
+    list->count--; // Decrease count by 1
 }
 
-void clean_up(struct node *node) {
-    while (node != NULL)
+void clean_up(struct list *list) {
+    struct node *node = list->root;
+    while (node)
     {
         free(node);
         node = node->next;
     }
+    free(list);
 }
 
 void list_traverse(struct node *node) {
-    while (node != NULL)
+    while (node)
     {
         printf("%d\n", node->data);
         node = node->next;
@@ -75,10 +78,11 @@ void list_traverse(struct node *node) {
 
 int main(void) {
     struct list *list = (struct list*)malloc(sizeof(struct list));
+    list->count = 0;
+    list->size = 50;
     list->root = NULL;
-    list->size = 0;
 
-    insert(list, 0);
+    insert(list, 1);
     insert(list, 3);
     insert(list, 2);
 
@@ -87,8 +91,7 @@ int main(void) {
     printf("Found: %d\n", (node) ? node->data : -1);
     printf("Traversing...\n");
     list_traverse(list->root);
-    printf("Size: %d\n", list->size);
-    clean_up(list->root);
-    free(list);
+    printf("Size: %d\n", list->count);
+    clean_up(list);
     return 0;
 }
