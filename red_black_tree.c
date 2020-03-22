@@ -44,7 +44,6 @@ void free_tree(struct node *node) {
 
 void left_rotate(tree* tr, struct node *node) {
     struct node *y = node->right; // We assume x's right node is non-empty
-    // struct node *xparent = node->parent;
     node->right = y->left;
 
     if (y->left)
@@ -58,14 +57,28 @@ void left_rotate(tree* tr, struct node *node) {
         node->parent->left = y;
     else
         node->parent->right = y;
-        // node->parent->left = y;
-        // y->parent = node->parent;
 
     y->left = node;
     node->parent = y;
 }
 
 void right_rotate(tree *tr, struct node *node) {
+    struct node *x = node->left; // we assume y's left node is non-empty
+    x->parent = node->parent;
+    node->left = x->right;
+
+    if (x->right)
+        x->right->parent = node;
+
+    if (!node->parent)
+        tr->root = x;
+    else if (node->data == node->parent->left->data)
+        node->parent->left = x;
+    else
+        node->parent->right = x;
+
+    x->right = node;
+    node->parent = x;
 
 }
 
